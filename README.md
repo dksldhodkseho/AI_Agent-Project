@@ -33,7 +33,7 @@
 
 ## 🖥️ 예시 실행 화면
 
-![image](https://github.com/user-attachments/assets/5650ddf5-0665-4995-b0e0-5032a0d3e715)
+<img src="https://github.com/user-attachments/assets/5650ddf5-0665-4995-b0e0-5032a0d3e715" width="50%" />
 
 
 ---
