@@ -15,7 +15,6 @@
 
 ## 🧩 주요 기능
 
-- ✅ 사용자 음성 입력을 텍스트로 변환 (STT)
 - ✅ GPT API를 통해 상황 맞춤형 질문 제공
 - ✅ 답변에 대해 GPT 및 평가지표 기반 채점
 - ✅ 정량적 점수 및 피드백 출력
@@ -41,7 +40,6 @@
 
 - Python, Jupyter Notebook  
 - OpenAI GPT API  
-- Whisper STT (음성 인식)  
 - TextBlob, NLTK (텍스트 평가)  
 - Matplotlib / Seaborn (결과 시각화)
 
