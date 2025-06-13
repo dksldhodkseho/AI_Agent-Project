@@ -23,7 +23,7 @@
 
 AI 면접관의 전체 흐름은 다음과 같습니다.
 
-![시스템 구조도](./assets/ai_interview_pipeline.png)
+![시스템 구조도](./ai_interview_pipeline.png)
 
 > 자기소개 → AI 질문 생성 → 답변 입력 → 피드백 제공 → 점수화
 
@@ -134,6 +134,6 @@ demo.launch(share=True)
 
 점수: 85/100 - 경험이 잘 드러남, 구체성 보완 필요
 ```
-## 📊 주요 결과
-🔹 서비스 실제 화면
+## 📊 실제 서비스 화면
+![서비스 실제 화면](./ai_interview_ui.png)
 
