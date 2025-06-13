@@ -12,7 +12,7 @@
   사용자의 답변을 **자동 평가 및 점수화**, **개선 피드백**까지 제공합니다.
 
 - **사용 기술**:  
-  `Python`, `OpenAI GPT-3.5-turbo`, `Gradio`
+  `Python`, `OpenAI gpt-4o-mini`, `Gradio`
 
 ---
 
