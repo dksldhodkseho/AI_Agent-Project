@@ -49,6 +49,7 @@ def generate_question(user_intro):
         max_tokens=150
     )
     return response.choices[0].message['content'].strip()
+```
 ✅ 사용자의 자기소개를 기반으로 AI가 적절한 면접 질문을 자동 생성합니다.
 
 ### 2️⃣ 답변 평가 및 피드백 함수
@@ -64,6 +65,7 @@ def evaluate_answer(user_answer):
         max_tokens=200
     )
     return response.choices[0].message['content'].strip()
+```
 ✅ AI가 답변을 분석하고, 개선점 중심의 피드백을 제공합니다.
 
 ### 3️⃣ 답변 점수화 함수
@@ -79,6 +81,7 @@ def score_answer(user_answer):
         max_tokens=100
     )
     return response.choices[0].message['content'].strip()
+```
 ✅ 점수와 함께 간단한 평가 코멘트를 제공합니다.
 
 ### 4️⃣ Streamlit 인터페이스
@@ -97,6 +100,7 @@ if st.button("면접 시작"):
         score = score_answer(user_answer)
         st.write("피드백:", feedback)
         st.write("점수:", score)
+```
 ✅ 사용자와의 인터랙션을 위한 웹 UI 구성
 ✅ 면접 시작 → 질문 생성 → 답변 입력 → 피드백 및 점수 제공
 
