@@ -84,25 +84,45 @@ def score_answer(user_answer):
 ```
 ✅ 점수와 함께 간단한 평가 코멘트를 제공합니다.
 
-### 4️⃣ Streamlit 인터페이스
+### 4️⃣ Gradio 인터페이스
 ```python
-import streamlit as st
+import gradio as gr
 
-st.title("AI 면접관 Agent")
-user_intro = st.text_area("자기소개를 입력하세요.")
-if st.button("면접 시작"):
-    question = generate_question(user_intro)
-    st.write("면접관:", question)
+def initialize_state():
+    # 세션 상태 등 초기화
+    return {}
 
-    user_answer = st.text_area("답변을 입력하세요.", key="answer1")
-    if st.button("답변 제출"):
-        feedback = evaluate_answer(user_answer)
-        score = score_answer(user_answer)
-        st.write("피드백:", feedback)
-        st.write("점수:", score)
+def upload_and_initialize(file, session_state):
+    # 파일(이력서) 업로드 처리 및 세션 상태 초기화
+    # 예시: session_state['resume'] = file.read()
+    return session_state, [["AI", "이력서가 업로드되었습니다. 자기소개를 입력해 주세요."]]
+
+def chat_interview(user_input, session_state):
+    # AI가 질문 생성, 답변 평가 및 대화 관리
+    # 예시 구현 필요
+    return session_state, [["AI", "면접 질문입니다: ..."], ["User", user_input]]
+
+with gr.Blocks() as demo:
+    session_state = gr.State(initialize_state())
+
+    gr.Markdown("# 🤖 AI 면접관 \n이력서를 업로드하고 인터뷰를 시작하세요!")
+
+    with gr.Row():
+        file_input = gr.File(label="이력서 업로드 (PDF 또는 DOCX)")
+        upload_btn = gr.Button("인터뷰 시작")
+
+    chatbot = gr.Chatbot()
+    user_input = gr.Textbox(show_label=False, placeholder="답변을 입력하고 Enter를 누르세요.")
+
+    upload_btn.click(upload_and_initialize, inputs=[file_input, session_state], outputs=[session_state, chatbot])
+    user_input.submit(chat_interview, inputs=[user_input, session_state], outputs=[session_state, chatbot])
+    user_input.submit(lambda: "", None, user_input)
+
+# 실행
+demo.launch(share=True)
 ```
-✅ 사용자와의 인터랙션을 위한 웹 UI 구성
-✅ 면접 시작 → 질문 생성 → 답변 입력 → 피드백 및 점수 제공
+✅ Gradio 기반 웹 인터페이스 제공
+✅ 이력서 업로드, AI 면접 대화, 실시간 피드백 지원
 
 ## 💬 실행 예시
 ```plaintext
@@ -115,7 +135,5 @@ if st.button("면접 시작"):
 점수: 85/100 - 경험이 잘 드러남, 구체성 보완 필요
 ```
 ## 📊 주요 결과
-🔹 피드백 요약표
-
 🔹 서비스 실제 화면
 
