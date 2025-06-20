@@ -1,4 +1,4 @@
-# Step2_AI면접관 Agent v2.0
+# AI면접관 Agent 
 
 > GPT 기반 AI 면접관 Agent: 이력서 분석 → 질문 생성 → 답변 평가 → 피드백 제공
 
