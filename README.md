@@ -1,19 +1,40 @@
-# 🤖 AI 면접관 Agent
 
-자기소개를 입력하면 **AI가 실제 면접처럼 질문하고**,  
-**답변을 평가하며 피드백과 점수를 제공하는 AI 면접 시스템**입니다.
+## 🧠 시스템 구조
+
+AI 면접관의 전체 흐름은 다음과 같습니다.
+
+![시스템 구조도](./ai_interview_pipeline.png)
+
+> 자기소개 → AI 질문 생성 → 답변 입력 → 피드백 제공 → 점수화
 
 ---
 
-## 🗂️ 프로젝트 개요
+# Step2_AI면접관 Agent v2.0
 
-- **목표**:  
-  사용자의 자기소개서를 입력받아, AI가 **심층 질문을 생성하고**,  
-  사용자의 답변을 **자동 평가 및 점수화**, **개선 피드백**까지 제공합니다.
+> GPT 기반 AI 면접관 Agent: 이력서 분석 → 질문 생성 → 답변 평가 → 피드백 제공
 
-- **사용 기술**:  
-  `Python`, `OpenAI gpt-4o-mini`, `Gradio`
+---
 
+## ✅ 프로젝트 개요
+
+이 프로젝트는 GPT 기반 면접 시뮬레이터 Agent를 구현한 것입니다. 주요 기능은 다음과 같습니다:
+
+- 이력서 분석 (요약 + 키워드 + 트리거 포인트 추출)
+- 질문 전략 수립 및 맞춤형 질문 생성
+- 답변에 대한 평가 및 피드백
+- 인터뷰 흐름 제어 및 종합 평가 제공
+- Gradio 웹 앱 연동
+
+---
+
+## 🛠️ 사용 기술
+
+- Python (Google Colab)
+- LangChain, LangGraph
+- OpenAI GPT-4o-mini
+- Gradio (HuggingFace)
+- Chroma (Vector DB)
+  
 ---
 
 ## 🧠 시스템 구조
@@ -26,100 +47,87 @@ AI 면접관의 전체 흐름은 다음과 같습니다.
 
 ---
 
-## 🧩 핵심 기능 및 코드
+## ⚙️ 실행 방법
 
-각 기능을 개별 모듈로 구현하여 GPT API를 효과적으로 활용했습니다.
-
----
-
-### 1️⃣ 면접 질문 생성 함수
+### 1. 구글 드라이브 연동
 
 ```python
-def generate_question(user_intro):
-    prompt = f"아래 자기소개를 참고하여 지원자에게 던질 심층적인 면접 질문 한 가지를 만들어 주세요.\n\n자기소개: {user_intro}\n\n면접 질문:"
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "당신은 뛰어난 면접관입니다."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=150
-    )
-    return response.choices[0].message['content'].strip()
+from google.colab import drive
+drive.mount('/content/drive')
 ```
-✅ 사용자의 자기소개를 기반으로 AI가 적절한 면접 질문을 자동 생성합니다.
-
-### 2️⃣ 답변 평가 및 피드백 함수
+### 2. 라이브러리 설치
 ```python
-def evaluate_answer(user_answer):
-    prompt = f"지원자의 답변을 평가하고 개선점을 간단하게 제시해 주세요.\n\n답변: {user_answer}\n\n평가 및 피드백:"
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "당신은 뛰어난 면접관입니다."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=200
-    )
-    return response.choices[0].message['content'].strip()
+!pip install -r /content/drive/MyDrive/project_genai/requirements.txt
 ```
-✅ AI가 답변을 분석하고, 개선점 중심의 피드백을 제공합니다.
-
-### 3️⃣ 답변 점수화 함수
+### 3. OpenAI API Key 설정
+api_key.txt 파일 형식:
 ```python
-def score_answer(user_answer):
-    prompt = f"다음 답변에 대해 0~100점의 점수를 매기고, 한 줄로 이유를 설명해 주세요.\n\n답변: {user_answer}\n\n점수와 간단한 코멘트:"
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "당신은 뛰어난 면접관입니다."},
-            {"role": "user", "content": prompt}
-        ],
-        max_tokens=100
-    )
-    return response.choices[0].message['content'].strip()
+OPENAI_API_KEY=your_api_key_here
 ```
-✅ 점수와 함께 간단한 평가 코멘트를 제공합니다.
+Python 코드로 키 불러오기:
+```python
+import os
 
-### 4️⃣ Gradio 인터페이스
+def load_api_keys(filepath="api_key.txt"):
+    with open(filepath, "r") as f:
+        for line in f:
+            if "=" in line:
+                k, v = line.strip().split("=", 1)
+                os.environ[k] = v
+
+load_api_keys('/content/drive/MyDrive/project_genai/api_key.txt')
+```
+### 4. 실행 예시
+```python
+filepath = '/content/drive/MyDrive/project_genai/Resume_sample.pdf'
+state = preProcessing_Interview(filepath)
+
+while True:
+    print("[질문]")
+    print(state["current_question"])
+    state["current_answer"] = input("[답변 입력]: ")
+    state = graph.invoke(state)
+    if state["next_step"] == "end":
+        break
+```
+## 🌐 Gradio 인터페이스 예시
 ```python
 import gradio as gr
 
-def initialize_state():
-    # 세션 상태 등 초기화
-    return {}
+def interview_run(file, answer):
+    state = preProcessing_Interview(file.name)
+    state["current_answer"] = answer
+    state = graph.invoke(state)
+    return state["current_question"], state["evaluation"][0]["평가에 대한 이유"]
 
-def upload_and_initialize(file, session_state):
-    # 파일(이력서) 업로드 처리 및 세션 상태 초기화
-    # 예시: session_state['resume'] = file.read()
-    return session_state, [["AI", "이력서가 업로드되었습니다. 자기소개를 입력해 주세요."]]
+iface = gr.Interface(
+    fn=interview_run,
+    inputs=["file", "textbox"],
+    outputs=["text", "text"],
+    title="AI 면접관 Agent v2.0"
+)
 
-def chat_interview(user_input, session_state):
-    # AI가 질문 생성, 답변 평가 및 대화 관리
-    # 예시 구현 필요
-    return session_state, [["AI", "면접 질문입니다: ..."], ["User", user_input]]
-
-with gr.Blocks() as demo:
-    session_state = gr.State(initialize_state())
-
-    gr.Markdown("# 🤖 AI 면접관 \n이력서를 업로드하고 인터뷰를 시작하세요!")
-
-    with gr.Row():
-        file_input = gr.File(label="이력서 업로드 (PDF 또는 DOCX)")
-        upload_btn = gr.Button("인터뷰 시작")
-
-    chatbot = gr.Chatbot()
-    user_input = gr.Textbox(show_label=False, placeholder="답변을 입력하고 Enter를 누르세요.")
-
-    upload_btn.click(upload_and_initialize, inputs=[file_input, session_state], outputs=[session_state, chatbot])
-    user_input.submit(chat_interview, inputs=[user_input, session_state], outputs=[session_state, chatbot])
-    user_input.submit(lambda: "", None, user_input)
-
-# 실행
-demo.launch(share=True)
+iface.launch()
 ```
-✅ Gradio 기반 웹 인터페이스 제공
-✅ 이력서 업로드, AI 면접 대화, 실시간 피드백 지원
+## 📌 고도화 핵심 기능
+✅ Resume 분석 고도화 (요약 + 키워드 + 중요도 + 트리거 탐지)
+
+✅ 질문 전략 3분야 설정 + Vector DB 유사질문 참조
+
+✅ 답변 평가 후 reflection으로 평가 품질 검토
+
+✅ 전략 순환 방식 면접 흐름 + 평가기반 종료/심화 전환
+
+✅ 종합 피드백 자동 생성
+
+## 📍참고 기술
+OpenAI GPT-4o-mini
+
+LangChain, LangGraph
+
+Gradio (HuggingFace)
+
+Chroma Vector DB
 
 ## 💬 실행 예시
 ```plaintext
